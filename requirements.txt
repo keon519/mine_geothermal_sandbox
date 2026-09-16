@@ -1,0 +1,5 @@
+flopy>=3.9
+modflowapi>=0.3
+tespy>=0.8
+numpy
+matplotlib
