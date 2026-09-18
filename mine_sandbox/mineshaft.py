@@ -1,24 +1,17 @@
 """MODFLOW 6 model of the flooded mineshaft: 1-D flow along the shaft, with
 radial heat conduction into the surrounding rock.
 
-Grid (DISU, unstructured):
 
-        rock shell n_r  ┌────────────────────────────────────┐   pinned at T_rock (CTP)
-        ...             │                                    │
-        rock shell 1    │                                    │   conduction only
-        shaft (j = 0)   │ Pump In ──▶ ▶ ▶ ▶ ▶ ▶ ▶ ──▶ Pump Out│   advection + conduction
-                        └────────────────────────────────────┘
-                          i = 0      ...           i = n_x-1
 
 Each column i is one slice dx of the shaft. Cell (i, 0) is the water in the
-shaft; cells (i, 1..n_r) are concentric annular rock shells around it. Every
+shaft; cells (i, 1..n_r) are rock shells around it. Every
 cell is given top=1, bot=0 and *area = its true volume*, so MODFLOW's
-volume = area*thickness is right, and each connection's HWVA is the true face
-area (shell cross-section along the shaft, 2*pi*r*dx radially).
+volume is right, and each connection's HWVA is the true face
+area (shell cross-section along the shaft, 2*pi*r*dx.
 
 Flow  : GWF, steady state. WEL injects the pumped flow at (0,0) carrying
         temperature T_in as an auxiliary variable; a CHD at (n_x-1, 0) is
-        "Pump Out". Rock has negligible K so no water moves through it.
+        "Pump Out". Rock has negligible K.
 Heat  : GWE, transient. EST stores heat in water + solid, ADV carries it along
         the shaft, CND conducts it into the rock. The water->wall film
         resistance is represented by a very short CL12 on the water side of
@@ -39,11 +32,9 @@ from .config import SandboxConfig
 from .rocks import WATER
 
 SEC_PER_DAY = 86400.0
-# Hydraulic conductivities are numerical devices here, not physics: the shaft K is
-# chosen so the head drop along the shaft is ~0.1 m (keeps the flow solver well
-# conditioned), and the rock K is 1e-9 of that (no parallel flow through rock).
+
 K_CONTRAST = 1.0e-9
-ROCK_POROSITY = 0.01     # a little pore water so EST is well-posed
+ROCK_POROSITY = 0.01    
 
 
 def find_mf6() -> str:
@@ -103,7 +94,7 @@ class MineshaftModel:
         self.exe = mf6_exe or find_mf6()
         self._build_geometry()
 
-    # ------------------------------------------------------------------ grid
+   
     def _build_geometry(self):
         c = self.cfg
         nx, nr = c.n_x, c.n_r
@@ -144,20 +135,19 @@ class MineshaftModel:
         conns = [[] for _ in range(self.nodes)]   # (neighbour, cl12, hwva, angldegx)
 
         def add(a, b, cl_a, cl_b, area, ang_ab):
-            # angldegx only matters for XT3D / specific-discharge output, but MF6
-            # insists on it; along-shaft = 0/180 deg, radial = 90/270 deg.
+            
             conns[a].append((b, cl_a, area, ang_ab))
             conns[b].append((a, cl_b, area, (ang_ab + 180.0) % 360.0))
 
         for i in range(nx):
-            # along the shaft (same radial index)
+            
             if i < nx - 1:
                 for j in range(ncol):
                     add(self.node(i, j), self.node(i + 1, j), dx / 2, dx / 2, self.xs_area[j], 0.0)
-            # radial: shaft water -> first rock shell (with film resistance)
+           
             add(self.node(i, 0), self.node(i, 1),
                 self.film_len, self.r_centres[1] - R, 2 * np.pi * R * dx, 90.0)
-            # radial: shell j -> shell j+1
+            
             for j in range(1, ncol - 1):
                 r_face = self.r_edges[j]
                 add(self.node(i, j), self.node(i, j + 1),
@@ -173,7 +163,7 @@ class MineshaftModel:
                 ja.append(b); ihc.append(1); cl12.append(cl); hwva.append(area); ang.append(a)
         self.iac, self.ja, self.ihc, self.cl12, self.hwva, self.angldegx = iac, ja, ihc, cl12, hwva, ang
         self.nja = len(ja)
-        self.area = np.tile(self.xs_area * dx, nx)   # volume per unit (=1) thickness
+        self.area = np.tile(self.xs_area * dx, nx)   # volume per unit 
         self._build_vertices()
 
     def _build_vertices(self):
@@ -197,7 +187,7 @@ class MineshaftModel:
                 cell2d.append((n, float(self.x_centres[i]), float(0.5 * (ye[j] + ye[j + 1])), 4, *v))
         self.vertices, self.cell2d, self.nvert = verts, cell2d, len(verts)
 
-    # ---------------------------------------------------------------- arrays
+   
     def _cell_arrays(self):
         c = self.cfg
         rock = c.rock_props
@@ -211,7 +201,7 @@ class MineshaftModel:
         rhos = np.full(self.nodes, rock.rho)
         return k, por, kts, cps, rhos, is_shaft
 
-    # ------------------------------------------------------------------ build
+    
     def build(self, periods: list[Period], temp_init: np.ndarray | None = None,
               workspace: str | None = None):
         c = self.cfg
@@ -233,7 +223,7 @@ class MineshaftModel:
                        angldegx=self.angldegx, nvert=self.nvert,
                        vertices=self.vertices, cell2d=self.cell2d)
 
-        # ---------------- flow model
+        
         gwf = flopy.mf6.ModflowGwf(sim, modelname=gwfname, save_flows=True)
         flopy.mf6.ModflowGwfdisu(gwf, length_units="METERS", **disu_kw)
         flopy.mf6.ModflowGwfnpf(gwf, icelltype=0, k=k)
@@ -253,7 +243,7 @@ class MineshaftModel:
                                        pname="ims_gwf", filename=f"{gwfname}.ims")
         sim.register_ims_package(ims_gwf, [gwfname])
 
-        # ---------------- heat transport model
+       
         gwe = flopy.mf6.ModflowGwe(sim, modelname=gwename, save_flows=True)
         flopy.mf6.ModflowGwedisu(gwe, length_units="METERS", **disu_kw)
         strt = np.full(self.nodes, c.T_rock_C) if temp_init is None else np.asarray(temp_init, float)
@@ -265,7 +255,7 @@ class MineshaftModel:
                                 density_water=WATER.rho, heat_capacity_solid=cps,
                                 density_solid=rhos, save_flows=True)
         flopy.mf6.ModflowGwessm(gwe, sources=[("WEL-1", "AUX", "TEMPERATURE")])
-        # pin the outermost rock shell at the undisturbed temperature
+      
         ctp = [((self.node(i, self.ncol - 1),), c.T_rock_C) for i in range(self.nx)]
         flopy.mf6.ModflowGwectp(gwe, stress_period_data={0: ctp}, pname="CTP-1")
         flopy.mf6.ModflowGweoc(gwe, budget_filerecord=f"{gwename}.cbc",
@@ -281,7 +271,7 @@ class MineshaftModel:
         self.sim, self.gwf, self.gwe, self.periods = sim, gwf, gwe, periods
         return sim
 
-    # -------------------------------------------------------------------- run
+  
     def run(self, periods: list[Period] | None = None, temp_init=None,
             workspace=None, silent=True) -> ShaftResult:
         c = self.cfg
