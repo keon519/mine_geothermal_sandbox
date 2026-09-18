@@ -1,7 +1,6 @@
 # Mine-water geothermal sandbox (MODFLOW 6 + TESPy)
 
-A small, hackable 1-D model of the loop in your sketch: hot water is pumped
-into one end of a flooded mine drift, gives heat to the surrounding rock as it
+A small, 1-D model of the loop, gives heat to the surrounding rock as it
 travels along the drift, and is pumped back out.
 
 ```
@@ -46,7 +45,7 @@ Figures land in `./figures/`, a CSV of the sweep results in
 
 All live on `SandboxConfig` (`mine_sandbox/config.py`):
 
-| what you asked to vary | field | default |
+ | field | default |
 |---|---|---|
 | flow in | `flow_m3_h` | 360 m³/h (100 L/s) |
 | temperature in | `T_in_C` | 35 °C |
@@ -85,23 +84,13 @@ r.runaway                 # True if the water hit T_max_C: this drift cannot rej
 With `Q_load_W=None` the coupled run instead holds `T_in_C` fixed and TESPy
 reports the heat-exchanger duty that implies.
 
-## What the model is (and isn't)
+## What the model is
 
-* Along the drift the water is treated as well mixed across the section (plug
-  flow), with upstream-weighted implicit advection — stable at any flow.
+* Along the drift the water is treated as well mixed across the section, no variable temperature within section,with upstream-weighted implicit advection — stable at any flow.
 * Around the drift the rock is a set of geometric-growth annular shells; heat
   conducts radially with the rock's `k`, `ρ`, `cp`. The outermost shell is held
-  at `T_rock_C`. There is no along-drift conduction bottleneck to worry about —
-  the rock is the bottleneck, which is why the baseline "heat removed" barely
-  moves with flow but scales with drift length, ΔT and rock conductivity.
-* Not included: groundwater actually flowing through the rock (regional
-  MODFLOW flow field), a free surface / open basin, heat loss at the ground
-  surface, multiple drifts interacting, seasonal rock temperature. All of these
-  are natural next steps — the grid is built in `MineshaftModel._build_geometry`
-  and `_build_connectivity`, so adding a second row of drifts or swapping the
-  rock shells for a real 2-D cross-section is local surgery.
-* Units inside MODFLOW are m, d, kg, J, °C (thermal conductivities are
-  multiplied by 86 400 in `mineshaft.py`).
+  at `T_rock_C`.
+  
 
 ## Files
 
