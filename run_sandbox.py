@@ -14,6 +14,8 @@ from dataclasses import replace
 
 import numpy as np
 
+FIG ="figures"
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mine_sandbox import SandboxConfig, MineshaftModel, run_coupled, ROCKS  # noqa: E402
 from mine_sandbox.plotting import plot_single_run, plot_sweep, plot_field, plt  # noqa: E402
