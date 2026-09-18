@@ -1,31 +1,28 @@
 """Couple the TESPy surface loop to the MODFLOW mineshaft.
 
-Default: **time-step coupling through the MODFLOW 6 API** (libmf6 + modflowapi).
-MODFLOW runs once; at every heat-transport time step we
+Default: **time-step coupling through the MODFLOW 6 API.
+MODFLOW runs once at every heat-transport time step
 
     1. read T_out  (water temperature in the last shaft cell),
-    2. hand it to TESPy, which returns the temperature the water will have
+    2. TESPy returns the temperature the water will have
        after the pump and the SMR-side heat exchanger  -> T_in,
     3. write T_in into the WEL inflow's TEMPERATURE auxiliary variable,
-    4. let MODFLOW solve the step.
+    4. MODFLOW SOLVE.
 
-Because the exchange happens every time step (default 0.5 d, i.e. shorter
-than the shaft's residence time), the closed loop behaves physically: with a
+Because the exchange happens every time step (default 0.5 d, shorter
+than the shaft's residence time), the closed loop behaves physically with a
 fixed SMR heat load the water warms until the rock can carry the load away,
-and the *rate* of warming is set by the loop's thermal inertia, not by an
-arbitrary coupling interval.
+and the *rate* of warming is set by the loop's thermal inertia
 
-Fallback: `run_coupled_sequential` re-runs the mf6 executable for each
-coupling step, restarting from the previous temperature field. Slower and
-only correct when coupling_step_days is comparable to the residence time.
+Fallback: `run_coupled_sequential` re-run
 
 Two modes, chosen by cfg.Q_load_W:
     Q_load_W = None  -> "fixed T_in": the SMR side heats the water to exactly
                         cfg.T_in_C no matter what comes back. TESPy reports
                         the heat duty that implies, plus pump power.
     Q_load_W = value -> "fixed heat load": the SMR dumps a constant Q [W] into
-                        the water; T_in floats. This is the realistic case
-                        for a heat-sink study.
+                        the water; T_in floats. realistic case
+                    
 """
 from __future__ import annotations
 
