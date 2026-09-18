@@ -1,10 +1,7 @@
-"""Mine-water geothermal sandbox — example driver.
 
-    python run_sandbox.py            # baseline + the four sweeps, figures in ./figures
-    python run_sandbox.py --quick    # shorter runs for a smoke test
-
+"""
 Everything is driven by SandboxConfig (mine_sandbox/config.py). The four
-variables you asked to vary are flow_m3_h, T_in_C, shaft_length_m /
+variables are flow_m3_h, T_in_C, shaft_length_m /
 shaft_diameter_m, and rock. Edit the SWEEPS dict below to change the values.
 """
 from __future__ import annotations
@@ -21,9 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mine_sandbox import SandboxConfig, MineshaftModel, run_coupled, ROCKS  # noqa: E402
 from mine_sandbox.plotting import plot_single_run, plot_sweep, plot_field, plt  # noqa: E402
 
-FIG = "figures"
 
-# ---------------------------------------------------------------------------
 # Baseline: 100 L/s of 35 °C water through a 500 m, 4 m drift in sandstone
 BASE = SandboxConfig(
     flow_m3_h=360.0, T_in_C=35.0, shaft_length_m=500.0, shaft_diameter_m=4.0,
@@ -31,7 +26,7 @@ BASE = SandboxConfig(
     workspace="mf6_run",
 )
 
-# The four sweeps. Each entry: (config field, list of values, pretty label)
+
 SWEEPS = {
     "flow":     ("flow_m3_h",       [90.0, 180.0, 360.0, 720.0],          "flow [m³/h]"),
     "T_in":     ("T_in_C",          [25.0, 35.0, 45.0, 60.0],             "T_in [°C]"),
@@ -54,7 +49,7 @@ def main():
     os.makedirs(FIG, exist_ok=True)
     base = replace(BASE, sim_days=90.0, dt_days=1.0) if args.quick else BASE
 
-    # ---- 1. baseline, fixed inlet temperature (MODFLOW only) ---------------
+    # baseline, fixed inlet temperature
     t0 = time.time()
     res = run_fixed_inlet(base)
     print(f"[baseline] {base.summary()}")
@@ -64,7 +59,7 @@ def main():
     plot_field(res, path=f"{FIG}/baseline_field.png")
     plt.close("all")
 
-    # ---- 2. the four sweeps (MODFLOW only, fixed T_in) ---------------------
+    # the four sweeps
     table = []
     for name, (field, values, label) in SWEEPS.items():
         results = {}
@@ -87,7 +82,7 @@ def main():
         for row in table:
             f.write(",".join(str(x) for x in row) + "\n")
 
-    # ---- 3. TESPy-coupled closed loop with a fixed SMR heat load ------------
+    # TESPy closed loop with a fixed SMR heat load
     if not args.no_coupled:
         for Q_MW in (0.1, 0.3, 1.0):
             cfg = replace(base, Q_load_W=Q_MW * 1e6, name=f"coupled_{Q_MW}MW")
