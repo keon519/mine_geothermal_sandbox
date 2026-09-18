@@ -1,12 +1,12 @@
-"""TESPy model of everything *above ground*:
+"""TESPy model of everything above ground:
 
     shaft outlet (T_out) ──▶ Pump ──▶ SMR-side heat exchanger (+Q_load) ──▶ return pipe ──▶ shaft inlet (T_in)
 
-TESPy solves the steady-state thermodynamics of this loop: given the water
+TESPy solves the  thermodynamics given the water
 coming back from the mine at T_out and the heat the reactor side dumps into it
 (Q_load), it returns the temperature the water will have when it re-enters
 the shaft, plus pump power and pressures.  MODFLOW then handles what the
-mine does to that water (see mineshaft.py / couple.py).
+mine does to that water see mineshaft.py + couple.py.
 """
 from __future__ import annotations
 
@@ -77,7 +77,7 @@ class SurfaceLoop:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             prev = logging.root.manager.disable
-            logging.disable(logging.CRITICAL)        # TESPy is chatty while iterating
+            logging.disable(logging.CRITICAL)        # TESPy logging
             try:
                 self.nw.solve("design")
             finally:
