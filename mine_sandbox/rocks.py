@@ -1,8 +1,6 @@
 """Thermal property library for the rock around the mineshaft.
 
-Values are typical literature ranges for dry-to-saturated rock at shallow
-depth. They are deliberately round numbers — this is a sandbox, so swap in
-site-specific values (e.g. from a well log or a lab report) when you have them.
+ swap in site-specific values
 
     k   : thermal conductivity  [W / (m K)]
     rho : bulk density          [kg / m^3]
@@ -29,8 +27,6 @@ class Rock:
         return self.k / self.volumetric_heat_capacity
 
 
-# Appalachian coal-measure lithologies first (what surrounds most SW Virginia
-# mines), then a few generic end-members for sensitivity studies.
 ROCKS = {
     "sandstone": Rock("sandstone", k=2.5, rho=2350.0, cp=800.0),
     "shale":     Rock("shale",     k=1.8, rho=2450.0, cp=900.0),
@@ -39,7 +35,6 @@ ROCKS = {
     "coal":      Rock("coal",      k=0.3, rho=1350.0, cp=1300.0),
     "granite":   Rock("granite",   k=3.0, rho=2650.0, cp=790.0),
     "basalt":    Rock("basalt",    k=1.9, rho=2900.0, cp=850.0),
-    # A "rock" that stores heat like water — useful as a sanity check.
     "water":     Rock("water",     k=0.6, rho=1000.0, cp=4184.0),
 }
 
