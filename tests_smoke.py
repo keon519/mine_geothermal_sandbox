@@ -1,4 +1,4 @@
-"""Quick checks: energy balance closes, runaway guard works.  python tests_smoke.py"""
+"""Quick checks"""
 import os, sys, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mine_sandbox import SandboxConfig, MineshaftModel, run_coupled
@@ -14,4 +14,4 @@ assert r.T_out_C[-1] < cfg.T_in_C and r.T_out_C[-1] > cfg.T_rock_C
 
 c = run_coupled(SandboxConfig(sim_days=120, Q_load_W=2e6, workspace="mf6_run/tests", name="runaway"))
 assert c.runaway, "2 MW into a 500 m drift should run away"
-print("runaway guard OK; all smoke tests passed")
+print("runaway guard OK; all tests passed")
