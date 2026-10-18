@@ -1,0 +1,32 @@
+# Install everything with:  pip install -r requirements.txt
+# Then fetch the MODFLOW 6 binaries (mf6 + libmf6):  get-modflow :python
+
+# --- core numerics / plotting ---
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+
+# --- groundwater + thermodynamics engines ---
+flopy>=3.9          # provides the get-modflow command
+modflowapi>=0.3     # live MF6 API session (falls back to restart mode without it)
+tespy>=0.8
+
+# --- live simulator GUI (python -m mine_sandbox.gui) ---
+# PySide6 6.12.0 crashes on exit with pyqtgraph; 6.10/6.11 are tested.
+PySide6-Essentials>=6.6,<6.12
+pyqtgraph>=0.13
+
+# --- 3-D view and ParaView export ---
+vtk>=9.2            # imported directly by mine_sandbox.viz3d
+pyvista>=0.44
+pyvistaqt>=0.11
+
+# --- YAML mine files ---
+pyyaml>=6.0
+
+# --- optional: solve on an NVIDIA GPU (pick the one matching your CUDA driver) ---
+# cupy-cuda12x[ctk]
+# cupy-cuda13x[ctk]
+
+# --- tests ---
+pytest>=7.0

@@ -1,0 +1,23 @@
+{
+  "format": "mine-sandbox/mine",
+  "version": 1,
+  "name": "Traced drifts",
+  "description": "Tunnel centrelines digitised from a (fictional) mine map: a main haulage drift, two branches and an angled return airway. Coordinates in metres in the map's local frame.",
+  "source": "hand-written example (traced layout)",
+  "seam": {"thickness_m": 2.2, "depth_m": 180, "rock": "coal"},
+  "strata": {"background": "shale",
+             "beds": [{"z_bottom_m": 3.0, "z_top_m": 1e9, "rock": "sandstone"}]},
+  "conditions": {"flow_m3_h": 300, "T_in_C": 32},
+  "pumps": {"inlet_xy": [0, 0], "outlet_xy": [420, 160]},
+  "grid": {"plan_cell_m": 5, "margin_m": 40, "margin_cells": 4},
+  "layout": {
+    "type": "polylines",
+    "drifts": [
+      {"points": [[0, 0], [180, 0], [300, 20], [420, 20]], "width_m": 5},
+      {"points": [[180, 0], [180, 120], [260, 160], [420, 160]], "width_m": 5},
+      {"points": [[300, 20], [300, 90]], "width_m": 5},
+      {"points": [[420, 20], [420, 160]], "width_m": 5},
+      {"points": [[60, 0], [100, -70], [160, -90]], "width_m": 5}
+    ]
+  }
+}

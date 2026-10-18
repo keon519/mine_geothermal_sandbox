@@ -1,0 +1,18 @@
+# core
+flopy>=3.9
+modflowapi>=0.3
+tespy>=0.8
+numpy
+scipy
+matplotlib
+# live simulator GUI (python -m mine_sandbox.gui)
+# PySide6 6.12.0 has reference-counting bugs that crash on exit with pyqtgraph; 6.10/6.11 are tested.
+PySide6-Essentials>=6.6,<6.12
+pyqtgraph>=0.13
+# 3-D view and ParaView export (optional: the app runs without them)
+pyvista>=0.44
+pyvistaqt>=0.11
+# optional: YAML mine files
+pyyaml
+# tests
+pytest

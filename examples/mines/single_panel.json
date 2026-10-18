@@ -1,0 +1,29 @@
+{
+  "format": "mine-sandbox/mine",
+  "version": 1,
+  "name": "Single panel",
+  "description": "One room-and-pillar panel: 5 entries, 10 pillars along, 6 m openings, 18 m square pillars. Pumps at opposite corners.",
+  "source": "hand-written example (parametric layout)",
+  "seam": {"thickness_m": 1.8, "depth_m": 250, "rock": "coal"},
+  "strata": {
+    "background": "shale",
+    "beds": [
+      {"z_bottom_m": 0.9,  "z_top_m": 4.0, "rock": "shale"},
+      {"z_bottom_m": 4.0,  "z_top_m": 1e9, "rock": "sandstone"},
+      {"z_bottom_m": -2.0, "z_top_m": -0.9, "rock": "shale"},
+      {"z_bottom_m": -1e9, "z_top_m": -2.0, "rock": "siltstone"}
+    ]
+  },
+  "conditions": {"flow_m3_h": 360, "T_in_C": 35, "T_rock_C": null, "T_surface_C": 12, "gradient_C_per_km": 25,
+                 "h_film_W_m2K": 800, "water_porosity": 1.0},
+  "pumps": {"inlet_xy": [3, 3], "outlet_xy": [237, 93]},
+  "grid": {"plan_cell_m": 6, "margin_m": 40, "margin_cells": 4, "layers_above": 6, "layers_below": 5,
+           "extent_above_m": 40, "extent_below_m": 40, "first_layer_m": 0.5, "bridge_diagonals": true},
+  "layout": {
+    "type": "room_and_pillar",
+    "origin": [0, 0], "rotation_deg": 0,
+    "n_entries": 5, "n_pillars_along": 10,
+    "entry_width_m": 6, "crosscut_width_m": 6,
+    "pillar_length_m": 18, "pillar_width_m": 18
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "format": "mine-sandbox/mine",
+  "version": 1,
+  "name": "Synthetic small mine 2",
+  "description": "Procedurally generated (small): 4 main entries, 1 panels, 0 closed zones; entries 6 m, seam 1.4 m at 470 m.",
+  "source": "mine_sandbox.mines.generate seed=2 size=small",
+  "seam": {
+    "thickness_m": 1.4,
+    "depth_m": 470.0,
+    "rock": "coal"
+  },
+  "strata": {
+    "background": "shale",
+    "beds": [
+      {
+        "z_bottom_m": 0.7,
+        "z_top_m": 3.0999999999999996,
+        "rock": "shale"
+      },
+      {
+        "z_bottom_m": 3.0999999999999996,
+        "z_top_m": 12.2,
+        "rock": "shale"
+      },
+      {
+        "z_bottom_m": 12.2,
+        "z_top_m": 24.5,
+        "rock": "shale"
+      },
+      {
+        "z_bottom_m": 24.5,
+        "z_top_m": 31.3,
+        "rock": "shale"
+      },
+      {
+        "z_bottom_m": 31.3,
+        "z_top_m": 1000000000.0,
+        "rock": "shale"
+      },
+      {
+        "z_bottom_m": -2.2,
+        "z_top_m": -0.7,
+        "rock": "shale"
+      },
+      {
+        "z_bottom_m": -1000000000.0,
+        "z_top_m": -2.2,
+        "rock": "siltstone"
+      }
+    ]
+  },
+  "conditions": {
+    "flow_m3_h": 360.0,
+    "T_in_C": 35.0,
+    "T_rock_C": null,
+    "T_surface_C": 12.0,
+    "gradient_C_per_km": 25.0,
+    "h_film_W_m2K": 800.0,
+    "water_porosity": 1.0
+  },
+  "pumps": {
+    "inlet_xy": null,
+    "outlet_xy": null
+  },
+  "grid": {
+    "plan_cell_m": 6.0,
+    "margin_m": 40.0,
+    "margin_cells": 4,
+    "layers_above": 6,
+    "layers_below": 5,
+    "extent_above_m": 40.0,
+    "extent_below_m": 40.0,
+    "first_layer_m": 0.5,
+    "bridge_diagonals": true
+  },
+  "layout": {
+    "type": "composite",
+    "parts": [
+      {
+        "type": "room_and_pillar",
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "rotation_deg": 0.0,
+        "n_entries": 4,
+        "n_pillars_along": 6,
+        "entry_width_m": 6.0,
+        "crosscut_width_m": 6.0,
+        "pillar_length_m": 18.0,
+        "pillar_width_m": 12.0
+      },
+      {
+        "type": "room_and_pillar",
+        "origin": [
+          114.0,
+          60.0
+        ],
+        "rotation_deg": 90.0,
+        "n_entries": 3,
+        "n_pillars_along": 4,
+        "entry_width_m": 6.0,
+        "crosscut_width_m": 6.0,
+        "pillar_length_m": 12.0,
+        "pillar_width_m": 24.0
+      }
+    ],
+    "holes": []
+  }
+}

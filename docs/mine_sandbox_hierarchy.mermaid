@@ -1,0 +1,120 @@
+flowchart TD
+    %% mine_sandbox code hierarchy — arrows point from a module to what it imports
+
+    subgraph ENTRY["Entry points (repo root)"]
+        run_gui[run_gui.py]
+        run_sandbox[run_sandbox.py]
+        run_mines[run_mines.py]
+        run_bench[run_benchmark.py]
+    end
+
+    subgraph UI["gui/ — PySide6 app"]
+        app[app.py / __main__] --> main_window[main_window.py]
+        main_window --> settings_panel[settings_panel.py]
+        main_window --> slice_view[slice_view.py]
+        main_window --> volume_view[volume_view.py]
+        main_window --> charts[charts.py]
+        main_window --> layer_selector[layer_selector.py]
+        main_window --> worker[worker.py]
+        settings_panel & slice_view & volume_view & charts & layer_selector --> theme[theme.py]
+    end
+
+    subgraph LIVE["live/ — background run sessions"]
+        process[process.py] --> session[session.py]
+        process --> history[history.py]
+        session --> config[config.py]
+        session --> progress[progress.py]
+        session --> history
+    end
+
+    subgraph VIZ["viz3d/"]
+        export[export.py] --> volume_data[volume_data.py]
+    end
+
+    subgraph MINES["mines/ — mine maps"]
+        mgenerate[generate.py] --> mio[io.py]
+        mgenerate --> layouts[layouts.py]
+        mgenerate --> spec[spec.py]
+        mio --> spec
+        spec --> layouts
+        mscenario[scenario.py] --> mgrid[grid.py]
+        mscenario --> spec
+        mgrid --> spec
+    end
+
+    subgraph RUN["Orchestration"]
+        simulation[simulation.py<br/>run_coupled] --> engines[engines.py]
+        simulation --> energy[energy.py]
+        simulation --> results[results.py]
+        plotting[plotting.py] --> results
+    end
+
+    subgraph ENGINES["Thermal engines"]
+        fv[fv.py<br/>built-in finite volume]
+        subgraph MF6["mf6/ — MODFLOW 6"]
+            mf6session[session.py] --> batch[batch.py]
+            mf6session --> builder[builder.py]
+            batch --> builder
+            builder --> executables[executables.py]
+        end
+        subgraph COMPUTE["compute/"]
+            block_solver[block_solver.py] --> devices[devices.py]
+        end
+        fv --> block_solver
+    end
+
+    subgraph SURF["surface/ — surface loop"]
+        tespy[tespy_loop.py<br/>TESPy] --> sbase[base.py]
+        constant[constant.py] --> sbase
+    end
+
+    subgraph CORE["Core model"]
+        model[model.py<br/>ThermalModel ABC] --> assembly[assembly.py]
+        assembly --> scenario[scenario.py]
+        scenario --> geology[geology.py]
+        scenario --> geometry[geometry.py]
+        geology --> materials[materials.py]
+        assembly --> materials
+        subgraph GRIDS["grids/"]
+            radial[radial.py] --> gbase[base.py<br/>CellGraph contract]
+            structured[structured.py] --> gbase
+        end
+        scenario --> GRIDS
+        assembly --> GRIDS
+        gbase --> geometry
+    end
+
+    %% cross-package links
+    run_gui --> app
+    run_sandbox & run_bench --> simulation
+    run_mines --> simulation
+    run_mines --> MINES
+    worker --> LIVE
+    main_window --> LIVE
+    main_window --> VIZ
+    main_window --> MINES
+    settings_panel --> engines
+    settings_panel --> COMPUTE
+    config --> MINES
+    config --> SURF
+    config --> scenario
+    session --> simulation
+    session --> engines
+    history --> simulation
+    volume_data --> GRIDS
+    engines --> fv
+    engines --> MF6
+    engines --> model
+    fv --> model
+    fv --> assembly
+    mf6session --> model
+    batch --> energy
+    builder --> GRIDS
+    simulation --> SURF
+    tespy --> materials
+    energy --> assembly
+    results --> assembly
+    mgrid --> gbase
+    mgrid --> geometry
+    mscenario --> scenario
+    spec --> geology

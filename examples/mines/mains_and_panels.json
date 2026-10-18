@@ -1,0 +1,29 @@
+{
+  "format": "mine-sandbox/mine",
+  "version": 1,
+  "name": "Mains and panels",
+  "description": "Three main entries with one panel on each side. A roof fall blocks a crosscut in the north panel; the south panel is sealed at its mouth, so it is flooded but receives no flow.",
+  "source": "hand-written example (composite layout)",
+  "seam": {"thickness_m": 1.5, "depth_m": 320, "rock": "coal"},
+  "strata": {"background": "shale",
+             "beds": [{"z_bottom_m": 2.5, "z_top_m": 12, "rock": "siltstone"},
+                      {"z_bottom_m": 12, "z_top_m": 1e9, "rock": "sandstone"}]},
+  "conditions": {"flow_m3_h": 360, "T_in_C": 35},
+  "pumps": {"inlet_xy": [3, 3], "outlet_xy": null},
+  "grid": {"plan_cell_m": 6},
+  "layout": {
+    "type": "composite",
+    "parts": [
+      {"type": "room_and_pillar", "origin": [0, 0], "rotation_deg": 0, "n_entries": 3, "n_pillars_along": 12,
+       "entry_width_m": 6, "pillar_length_m": 24, "pillar_width_m": 18},
+      {"type": "room_and_pillar", "origin": [174, 48], "rotation_deg": 90, "n_entries": 4, "n_pillars_along": 7,
+       "entry_width_m": 6, "pillar_length_m": 18, "pillar_width_m": 18},
+      {"type": "room_and_pillar", "origin": [240, 0], "rotation_deg": -90, "n_entries": 4, "n_pillars_along": 5,
+       "entry_width_m": 6, "pillar_length_m": 18, "pillar_width_m": 18}
+    ],
+    "holes": [
+      {"type": "rectangle", "origin": [150, 125], "length_m": 6, "width_m": 6},
+      {"type": "rectangle", "origin": [236, -9], "length_m": 86, "width_m": 8}
+    ]
+  }
+}

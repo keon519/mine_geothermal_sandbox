@@ -1,0 +1,6 @@
+bin/
+mf6_run/
+figures/
+__pycache__/
+*.pyc
+.pytest_cache/
